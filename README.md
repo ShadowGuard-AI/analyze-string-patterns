@@ -1,3 +1,5 @@
+![Banner](banner.png)
+
 # analyze-string-patterns
 Identifies and counts occurrences of common suspicious string patterns (e.g., IP addresses, email addresses, URLs, hex-encoded data) within a given text file, using regular expressions. - Focused on Data analysis and reporting
 

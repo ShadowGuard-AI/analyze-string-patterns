@@ -3,6 +3,7 @@ import re
 import logging
 import pandas as pd
 import os
+import sys
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -16,7 +17,7 @@ def setup_argparse():
     parser = argparse.ArgumentParser(description="Identifies and counts occurrences of suspicious string patterns in a text file.")
     parser.add_argument("filepath", help="Path to the text file to analyze.")
     parser.add_argument("-o", "--output", help="Path to save the analysis results as a CSV file (optional).", default=None)
-    parser.add_argument("-l", "--log_level", help="Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL). Defaults to INFO.", default="INFO")
+    parser.add_argument("-l", "--log_level", help="Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL). Defaults to INFO.", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"])
     return parser
 
 def analyze_file(filepath):
@@ -43,13 +44,16 @@ def analyze_file(filepath):
     # Regular expressions for suspicious patterns
     patterns = {
         "IP Address": r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b",
-        "Email Address": r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b",
+        "Email Address": r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b",  # [A-Z|a-z] would also match a literal pipe, so "a|b" passed as a TLD
         "URL": r"\b(?:https?://|www\.)[^\s]+\b",
         "Hex Encoded": r"\\x[0-9a-fA-F]{2}",  # Matches \x followed by two hexadecimal characters
         "MD5 Hash": r"\b[0-9a-fA-F]{32}\b",
         "SHA1 Hash": r"\b[0-9a-fA-F]{40}\b",
         "SHA256 Hash": r"\b[0-9a-fA-F]{64}\b",
-        "Base64 Encoded": r"\b(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\b"
+        # At least four full groups (16 chars) are required. The earlier
+        # all-optional form matched nearly every word in a file and counted
+        # 45 hits in one short test sentence.
+        "Base64 Encoded": r"\b(?:[A-Za-z0-9+/]{4}){4,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\b"
     }
 
     results = {}
@@ -78,10 +82,13 @@ def save_results(df, output_path):
     try:
         df.to_csv(output_path)
         logging.info(f"Results saved to: {output_path}")
+        return True
     except IOError as e:
         logging.error(f"Error saving to file {output_path}: {e}")
+        return False
     except Exception as e:
         logging.error(f"An unexpected error occurred while saving the results: {e}")
+        return False
 
 def main():
     """
@@ -90,19 +97,15 @@ def main():
     parser = setup_argparse()
     args = parser.parse_args()
 
-    # Set logging level based on command line argument
-    try:
-        logging.getLogger().setLevel(args.log_level.upper())
-    except ValueError:
-        logging.error("Invalid log level.  Please choose from DEBUG, INFO, WARNING, ERROR, or CRITICAL.")
-        return
+    # Argparse choices already rejected an unknown level, with exit code 2.
+    logging.getLogger().setLevel(args.log_level.upper())
 
     filepath = args.filepath
 
     # Input validation: Check if the file path is valid
     if not os.path.isfile(filepath):
         logging.error(f"Error: The provided file path '{filepath}' is not a valid file.")
-        return
+        sys.exit(1)
     
     logging.info(f"Analyzing file: {filepath}")
     
@@ -111,10 +114,11 @@ def main():
     if df is not None:  # Only proceed if analysis was successful
         print(df) # Print to console by default
 
-        if args.output:
-            save_results(df, args.output)
+        if args.output and not save_results(df, args.output):
+            sys.exit(1)
     else:
         logging.error("Analysis failed. See log for details.")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

@@ -29,6 +29,11 @@ def analyze_file(filepath):
         pandas.DataFrame: A DataFrame containing the counts of each pattern found.  Returns None on error.
     """
     try:
+        # Strict UTF-8 with no error handler, and the whole file in
+        # memory at once. A binary file, which is the input this kind
+        # of pattern hunt usually wants, raises UnicodeDecodeError and
+        # is caught by the generic handler below as a failed analysis.
+        # This is a text file tool in practice, whatever the framing.
         with open(filepath, 'r', encoding='utf-8') as f:  # Explicit encoding for handling different character sets
             text = f.read()
     except FileNotFoundError:
@@ -46,7 +51,7 @@ def analyze_file(filepath):
         "IP Address": r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b",
         "Email Address": r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b",  # [A-Z|a-z] would also match a literal pipe, so "a|b" passed as a TLD
         "URL": r"\b(?:https?://|www\.)[^\s]+\b",
-        "Hex Encoded": r"\\x[0-9a-fA-F]{2}",  # Matches \x followed by two hexadecimal characters
+        "Hex Encoded": r"\\x[0-9a-fA-F]{2}",  # Matches the literal four characters \x plus two hex digits as written text, as in source code or a log; it does not see actual escaped bytes inside a binary
         "MD5 Hash": r"\b[0-9a-fA-F]{32}\b",
         "SHA1 Hash": r"\b[0-9a-fA-F]{40}\b",
         "SHA256 Hash": r"\b[0-9a-fA-F]{64}\b",
@@ -56,6 +61,12 @@ def analyze_file(filepath):
         "Base64 Encoded": r"\b(?:[A-Za-z0-9+/]{4}){4,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\b"
     }
 
+    # The output is counts only: no matched text, no positions. The
+    # patterns also overlap by design, so one string can raise several
+    # counts at once, an IP inside a URL counts under both, and the
+    # base64 shape matches any long run of ordinary letters whose
+    # length divides by four, which includes plenty of plain words.
+    # The counts say where to look closer, never what was found.
     results = {}
     for name, regex in patterns.items():
         try:

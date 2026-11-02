@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 44" role="img" aria-label="Thunderhead divider on a silver rule">
+<line x1="0" y1="30" x2="1200" y2="30" stroke="#9aa0a6" stroke-width="3"/>
+<g fill="#7d838a"><ellipse cx="548" cy="24" rx="34" ry="13"/><ellipse cx="586" cy="16" rx="40" ry="17"/><ellipse cx="628" cy="24" rx="34" ry="13"/><rect x="520" y="22" width="140" height="9"/></g>
+<polygon points="592,26 578,40 590,40 582,52" fill="#e8a56b" transform="scale(0.82) translate(128,-8)">
+<animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;0.44;0.5;0.56;1" dur="6s" repeatCount="indefinite"/>
+</polygon></svg>

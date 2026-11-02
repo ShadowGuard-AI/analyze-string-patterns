@@ -3,162 +3,114 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Analyze String Patterns: what it is, how it runs, where it stops</title>
-<meta name="description" content="Analyze String Patterns is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.">
+<title>analyze-string-patterns: Fog Bell and Fog Whistle Coast</title>
+<meta name="description" content="Identifies and counts occurrences of common suspicious string patterns within a given text file, using regular expressions, with a verified tally of eight patterns.">
 <style>
-:root {
-  --bg: #0c1016; --panel: #141a24; --ink: #e8ecf0;
-  --mut: #1b2330;
-  --acc: #d8844a; --acc2: #5eb2a8;
-  --line: #141a24;
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink);
-  font-family: Charter, Georgia, serif; line-height: 1.55; }
-code, pre, .mono { font-family: 'DejaVu Sans Mono', monospace; }
-a { color: var(--acc2); }
-.hero { padding: 3rem 6vw 1rem; }
-.hero img.banner { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; }
-.logo { width: 92px; height: 92px; border-radius: 18px;
-  border: 1px solid var(--line); }
-h1 { font-size: 2.4rem; margin: 0.4em 0 0.1em; }
-h2 { border-bottom: 2px solid var(--acc); padding-bottom: 0.2em;
-  margin-top: 2em; }
-.lede { font-size: 1.15rem; max-width: 62ch; }
-main { padding: 0 6vw 3rem; max-width: 1180px; margin: 0 auto; }
-.grid { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-.card { background: var(--panel); border: 1px solid var(--line);
-  border-radius: 12px; padding: 1rem 1.2rem; }
-.card.pop { animation: rise 0.7s ease both; }
-@keyframes rise { from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; } }
-pre.code { background: #101014; color: #e8e6df; padding: 1rem 1.2rem;
-  border-radius: 12px; overflow-x: auto; font-size: 0.86rem;
-  border-left: 5px solid var(--acc); }
-table { border-collapse: collapse; width: 100%; }
-td, th { border-bottom: 1px solid var(--line); padding: 0.45rem 0.6rem;
-  text-align: left; }
-.shots { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.shots img { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; background: #f4f1e8; }
-footer { padding: 2rem 6vw; border-top: 1px solid var(--line);
-  color: var(--mut); }
-.rail { display: flex; gap: 1.2rem; align-items: flex-start; }
-.rail nav { position: sticky; top: 1rem; min-width: 180px; }
-@media (max-width: 760px) { .rail { flex-direction: column; }
-  .rail nav { position: static; } }
-@media (prefers-reduced-motion: reduce) {
-  .card.pop { animation: none; } * { scroll-behavior: auto; } }
+@font-face{font-family:'BBH Bogle';src:url('fonts/BBHBogle.ttf') format('truetype');}
+@font-face{font-family:'Bitter';src:url('fonts/Bitter.ttf') format('truetype');}
+:root{--blue:#3a5f8a;--silver:#c0c4c8;--cirrus:#f2f3f0;--apricot:#e8a56b;--ink:#2e3236;--darkgrey:#4a4e52}
+*{box-sizing:border-box}body{margin:0;background:var(--silver);color:var(--ink);font-family:'Bitter',serif;line-height:1.75}
+h1,h2,h3{font-family:'BBH Bogle',sans-serif;color:var(--blue)}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;background:var(--silver)}
+.hero img.heroimg{width:100%;height:62vh;object-fit:cover;display:block}
+.hero .in{padding:1rem 6vw 2rem;max-width:1120px;margin:0 auto;width:100%}
+.logo{width:180px;background:var(--cirrus);padding:6px}
+main{padding:0 6vw 3rem;max-width:1120px;margin:0 auto}
+nav{display:flex;gap:.8rem;flex-wrap:wrap;margin:1.1rem 0 .4rem}
+.plate{display:inline-block;text-decoration:none;text-align:center;color:var(--blue);font-family:'BBH Bogle',sans-serif;font-size:.9rem;padding:.65rem 1.4rem;background:linear-gradient(to bottom,#d8dbdd,#b9bdc0);border-radius:6px;box-shadow:inset 0 3px 0 var(--blue);transition:box-shadow .15s,background .2s}
+.plate:hover{background:radial-gradient(ellipse at center,#eef0ee 0,#c9ccd0 78%)}
+.plate:hover span{color:#24476b}
+.plate:active{box-shadow:inset 0 3px 0 var(--blue),inset 8px 8px 10px -6px rgba(30,32,36,.55),inset -8px 8px 10px -6px rgba(30,32,36,.55),inset 8px -8px 10px -6px rgba(30,32,36,.55),inset -8px -8px 10px -6px rgba(30,32,36,.55)}
+.plate:focus-visible{outline:none;box-shadow:inset 0 6px 0 var(--blue)}
+a{color:var(--blue);text-decoration:none}
+a .hand{display:inline-block;margin-right:.45em;color:var(--blue);transform:rotate(-38deg);transition:transform .18s;font-style:normal}
+a:hover .hand{transform:rotate(0deg)}
+.logpage{background:var(--cirrus);margin:1.9rem 0;padding:.6rem 1.6rem 1.4rem 2.2rem;position:relative;background-image:repeating-linear-gradient(to bottom,transparent 0 30px,rgba(154,160,166,.28) 30px 31px)}
+.logpage:before{content:'';position:absolute;left:0;top:0;bottom:0;width:11px;background:#a6abb0}
+.logpage.open:before{background:var(--apricot)}
+pre{background:#e4e7e9;color:var(--ink);padding:1rem;overflow-x:auto;font-family:'Bitter',serif}
+table{border-collapse:collapse;margin:.8rem 0}
+th,td{border:1.6px solid var(--darkgrey);padding:.45rem 1.2rem;text-align:left}
+th{font-family:'BBH Bogle',sans-serif;color:var(--blue)}
+.tally{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
+@media(max-width:760px){.tally{grid-template-columns:1fr}}
+.tally ul{list-style:none;margin:.4rem 0;padding:0}
+.tally li{display:flex;justify-content:space-between;border-bottom:1px solid rgba(74,78,82,.4);padding:.35rem .2rem}
+.tally li b{font-family:'BBH Bogle',sans-serif;color:var(--blue)}
+.fogbank{height:30px;margin:1.4rem 0;background:linear-gradient(to bottom,rgba(242,243,240,.0),#eef0ee 45%,#dfe2e4 80%);border-bottom:3px solid #aeb3b8;border-radius:50% 50% 0 0/100% 100% 0 0}
+.fogbank.thin{height:15px}
+footer{padding:1rem 6vw 2.6rem;max-width:1120px;margin:0 auto}
+.note{background:#d8dbdd;border-left:8px solid var(--apricot);color:var(--darkgrey);padding:.6rem 1rem}
 </style>
 </head>
-<body class="layout-grid">
-<!-- This page exists for analyze-string-patterns alone: the layout (console-grid),
-     the colors, and the type were picked for this project, not
-     shared with the other project pages. The code block below is
-     copied from the file it names, line for line. If it looks
-     plain, that is because the project is plain, and I would
-     rather the page match the project than dress it up. The one
-     thing I will not do here is oversell: what this project does
-     not do is stated on the page, not hidden from it. -->
+<body>
 <header class="hero">
-  <img class="logo" src="assets/logo.png" alt="Analyze String Patterns logo">
-  <img class="banner" src="assets/banner.png" alt="">
-  <h1>Analyze String Patterns</h1>
-  <p class="mono"><a href="https://github.com/ShadowGuard-AI/analyze-string-patterns">github.com/ShadowGuard-AI/analyze-string-patterns</a></p>
+<img class="heroimg" src="assets/intro-banner.png" alt="A coast in fog: black rock in the foreground with a rope coil and a crate, the bell tower alone on its headland with the hut unlit behind it, layered fog banks above, no text">
+<div class="in">
+<img class="logo" src="assets/logo.png" alt="A fog bell in a squat open tower cut in half by a hard fog line, one post carrying a narrow altitude blue band, the name in altitude blue beneath the fog">
+<h1>analyze-string-patterns</h1>
+<p>A listening post log, one entry per topic in the order a keeper would write them. The apricot tab marks the entry that stands open.</p>
+<nav>
+<a class="plate" href="#task"><span>The task</span></a>
+<a class="plate" href="#tally"><span>The tally sheet</span></a>
+<a class="plate" href="#station"><span>Bringing the tool</span></a>
+<a class="plate" href="#run"><span>The run</span></a>
+<a class="plate" href="#outputs"><span>Outputs and failure</span></a>
+</nav>
+</div>
 </header>
-
 <main>
-  <section class="rail">
-    <nav aria-label="on this page">
-      <p class="mono"><a href="#run">Run it</a><br>
-      <a href="#files">The files</a><br>
-      <a href="#sheets">The sheets</a><br>
-      <a href="https://github.com/ShadowGuard-AI/analyze-string-patterns">The repo</a></p>
-    </nav>
-    <div>
-      <p class="lede">Analyze String Patterns is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.</p>
-      <div class="grid">
-        <div class="card pop"><h3>What it is</h3>
-          <p>Analyze String Patterns: 3 files, 137 counted
-          lines across Python 120, Markdown 16, Text 1. One job, done in the
-          open, in files you can read.</p></div>
-        <div class="card pop"><h3>The biggest piece</h3>
-          <p><code>main.py</code> carries the most
-          lines. If the project grows, that file is where the growth
-          lands first, for better or worse.</p></div>
-        <div class="card pop"><h3>The honest gap</h3>
-          <p>No test files yet. That is the honest gap, and the roadmap in the visuals folder says what the first one should cover.</p></div>
-      </div>
-      <section id="run">
-        <h2>Run it</h2>
-        <p>The repo README has the exact commands for this one. The
-        shape is the shape for most of my projects: clone it, read the
-        top file first so you know what will happen, then run it on
-        something you do not mind breaking.</p>
-        <p class="mono">$ git clone https://github.com/ShadowGuard-AI/analyze-string-patterns.git<br>$ cd analyze-string-patterns</p>
-      </section>
-      
-  <section aria-label="real code">
-    <h2>The code, as it sits in the repo</h2>
-    <p>From <code>main.py</code>, line 8 on. I did
-    not tidy it for the page. What you see is what the file has.</p>
-    <pre class="code"><code>logging.basicConfig(level=logging.INFO, format=&#x27;%(asctime)s - %(levelname)s - %(message)s&#x27;)
-
-def setup_argparse():
-    &quot;&quot;&quot;
-    Sets up the argument parser for the command line interface.
-    Returns:
-        argparse.ArgumentParser: The configured argument parser.
-    &quot;&quot;&quot;
-    parser = argparse.ArgumentParser(description=&quot;Identifies and counts occurrences of suspicious string patterns in a text file.&quot;)
-    parser.add_argument(&quot;filepath&quot;, help=&quot;Path to the text file to analyze.&quot;)
-    parser.add_argument(&quot;-o&quot;, &quot;--output&quot;, help=&quot;Path to save the analysis results as a CSV file (optional).&quot;, default=None)
-    parser.add_argument(&quot;-l&quot;, &quot;--log_level&quot;, help=&quot;Set the logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL). Defaults to INFO.&quot;, default=&quot;INFO&quot;)
-    return parser
-
-def analyze_file(filepath):
-    &quot;&quot;&quot;
-    Analyzes the given file for suspicious string patterns and returns a pandas DataFrame with the results.
-    Args:
-        filepath (str): The path to the file to analyze.
-    Returns:
-        pandas.DataFrame: A DataFrame containing the counts of each pattern found.  Returns None on error.
-    &quot;&quot;&quot;</code></pre>
-  </section>
-      <section id="files">
-        <h2>The files that matter</h2>
-        <table><tr><th>File</th><th>Lines</th></tr>
-        <tr><td><code>main.py</code></td><td>120</td></tr>
-        <tr><td><code>README.md</code></td><td>16</td></tr>
-        <tr><td><code>requirements.txt</code></td><td>1</td></tr>
-        </table>
-        <p>Names doing the work: <span class="mono">setup_argparse, analyze_file, save_results, main</span>.</p>
-      </section>
-      <section id="sheets">
-        <h2>Drawn by hand</h2>
-        <p>I sketch my projects on notebook paper so I have to
-        understand them well enough to draw them. The full set,
-        with the counts and how they were counted, is the
-        <a href="https://github.com/ShadowGuard-AI/analyze-string-patterns/tree/main/analyze-string-patterns-Visuals">analyze-string-patterns-Visuals</a>
-        folder in the repo. Nothing is drawn over the binder holes.
-        That is a rule, not a style.</p>
-        <div class="shots">
-          <img src="assets/architecture.png" alt="Hand drawn architecture sheet for Analyze String Patterns">
-          <img src="assets/flowchart.png" alt="Hand drawn flowchart sheet for Analyze String Patterns">
-          <img src="assets/product-map.png" alt="Hand drawn product map sheet for Analyze String Patterns">
-        </div>
-      </section>
-    </div>
-  </section>
+<section class="logpage open" id="task">
+<h2>Log entry one: the task in the keeper's words</h2>
+<p>analyze-string-patterns identifies and counts occurrences of common suspicious string patterns within a given text file, using regular expressions.</p>
+<p>The entry says nothing beyond that sentence about how patterns are chosen. A closing line, so a visitor is not left expecting a configuration step the source never mentions: the source names no pattern definition file and no way to add patterns of your own.</p>
+</section>
+<div class="fogbank"></div>
+<section class="logpage" id="tally">
+<h2>Log entry two: the eight patterns with evidence behind them</h2>
+<p>The verified behavior section names eight patterns, reported in one sample. The tally is presented as one verified sample result, not as a promise about other files, because that is all the source offers.</p>
+<div class="tally">
+<div><h3>Found in the sample</h3><ul>
+<li><span>IP address</span><b>1</b></li>
+<li><span>email address</span><b>1</b></li>
+<li><span>URL</span><b>1</b></li>
+</ul></div>
+<div><h3>Not found in the sample</h3><ul>
+<li><span>Hex Encoded</span><b>0</b></li>
+<li><span>MD5 Hash</span><b>0</b></li>
+<li><span>SHA1 Hash</span><b>0</b></li>
+<li><span>SHA256 Hash</span><b>0</b></li>
+<li><span>Base64 Encoded</span><b>0</b></li>
+</ul></div>
+</div>
+</section>
+<div class="fogbank thin"></div>
+<section class="logpage" id="station">
+<h2>Log entry three: bringing the tool to the station</h2>
+<pre>git clone https://github.com/ShadowGuard-AI/analyze-string-patterns
+cd analyze-string-patterns
+pip install -r requirements.txt</pre>
+<p>Worth pausing on: the clone address here spells the account ShadowGuard-AI correctly, hyphen included, unlike several sibling repositories in this fleet.</p>
+<p><a href="https://github.com/ShadowGuard-AI/analyze-string-patterns"><i class="hand">&#10148;</i>The repository on GitHub</a></p>
+</section>
+<div class="fogbank"></div>
+<section class="logpage" id="run">
+<h2>Log entry four: the run and its arguments</h2>
+<pre>python3 main.py FILEPATH [-o OUTPUT] [-l LEVEL]</pre>
+<p><b>FILEPATH</b> is the path to the text file to analyze.</p>
+<p><b>-h</b> shows the help message and exits.</p>
+<p><b>-o</b>, also written <b>--output</b>, gives the path to save the analysis results as a CSV file, and is optional.</p>
+<p><b>-l</b>, also written <b>--log_level</b>, sets the logging level to one of DEBUG, INFO, WARNING, ERROR, or CRITICAL, with INFO as the default.</p>
+</section>
+<div class="fogbank thin"></div>
+<section class="logpage" id="outputs">
+<h2>Log entry five: outputs and failure, closing the log</h2>
+<p>With -o, the CSV has two columns, and those two column names are set here as an actual two cell table so a reader sees the shape of the result:</p>
+<table><tr><th>Pattern</th><th>Count</th></tr></table>
+<p class="note">A missing input file exits 1, stated plainly.</p>
+<p>Licence ends the page with the source's own wording: MIT License, see LICENSE. For once in this fleet, a named licence rather than a bare copyright line.</p>
+</section>
 </main>
-<footer>
-  <p>Analyze String Patterns is one of my projects. This page was written
-  from the repo itself on 2026-10-30: the counts are the
-  repo's counts, the code is the repo's code, and the gaps are the
-  repo's gaps.</p>
-</footer>
+<footer><p>Theme: fog bell and fog whistle coast. Type: BBH Bogle for headings, Bitter for reading, both SIL Open Font License 1.1. The lettering reference Beyonders was reference only and is not embedded.</p></footer>
 </body>
 </html>

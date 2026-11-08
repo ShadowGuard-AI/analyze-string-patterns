@@ -3,114 +3,73 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>analyze-string-patterns: Fog Bell and Fog Whistle Coast</title>
-<meta name="description" content="Identifies and counts occurrences of common suspicious string patterns within a given text file, using regular expressions, with a verified tally of eight patterns.">
+<title>analyze-string-patterns: The Net Loft</title>
 <style>
-@font-face{font-family:'BBH Bogle';src:url('fonts/BBHBogle.ttf') format('truetype');}
-@font-face{font-family:'Bitter';src:url('fonts/Bitter.ttf') format('truetype');}
-:root{--blue:#3a5f8a;--silver:#c0c4c8;--cirrus:#f2f3f0;--apricot:#e8a56b;--ink:#2e3236;--darkgrey:#4a4e52}
-*{box-sizing:border-box}body{margin:0;background:var(--silver);color:var(--ink);font-family:'Bitter',serif;line-height:1.75}
-h1,h2,h3{font-family:'BBH Bogle',sans-serif;color:var(--blue)}
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;background:var(--silver)}
-.hero img.heroimg{width:100%;height:62vh;object-fit:cover;display:block}
-.hero .in{padding:1rem 6vw 2rem;max-width:1120px;margin:0 auto;width:100%}
-.logo{width:180px;background:var(--cirrus);padding:6px}
-main{padding:0 6vw 3rem;max-width:1120px;margin:0 auto}
-nav{display:flex;gap:.8rem;flex-wrap:wrap;margin:1.1rem 0 .4rem}
-.plate{display:inline-block;text-decoration:none;text-align:center;color:var(--blue);font-family:'BBH Bogle',sans-serif;font-size:.9rem;padding:.65rem 1.4rem;background:linear-gradient(to bottom,#d8dbdd,#b9bdc0);border-radius:6px;box-shadow:inset 0 3px 0 var(--blue);transition:box-shadow .15s,background .2s}
-.plate:hover{background:radial-gradient(ellipse at center,#eef0ee 0,#c9ccd0 78%)}
-.plate:hover span{color:#24476b}
-.plate:active{box-shadow:inset 0 3px 0 var(--blue),inset 8px 8px 10px -6px rgba(30,32,36,.55),inset -8px 8px 10px -6px rgba(30,32,36,.55),inset 8px -8px 10px -6px rgba(30,32,36,.55),inset -8px -8px 10px -6px rgba(30,32,36,.55)}
-.plate:focus-visible{outline:none;box-shadow:inset 0 6px 0 var(--blue)}
-a{color:var(--blue);text-decoration:none}
-a .hand{display:inline-block;margin-right:.45em;color:var(--blue);transform:rotate(-38deg);transition:transform .18s;font-style:normal}
-a:hover .hand{transform:rotate(0deg)}
-.logpage{background:var(--cirrus);margin:1.9rem 0;padding:.6rem 1.6rem 1.4rem 2.2rem;position:relative;background-image:repeating-linear-gradient(to bottom,transparent 0 30px,rgba(154,160,166,.28) 30px 31px)}
-.logpage:before{content:'';position:absolute;left:0;top:0;bottom:0;width:11px;background:#a6abb0}
-.logpage.open:before{background:var(--apricot)}
-pre{background:#e4e7e9;color:var(--ink);padding:1rem;overflow-x:auto;font-family:'Bitter',serif}
-table{border-collapse:collapse;margin:.8rem 0}
-th,td{border:1.6px solid var(--darkgrey);padding:.45rem 1.2rem;text-align:left}
-th{font-family:'BBH Bogle',sans-serif;color:var(--blue)}
-.tally{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
-@media(max-width:760px){.tally{grid-template-columns:1fr}}
-.tally ul{list-style:none;margin:.4rem 0;padding:0}
-.tally li{display:flex;justify-content:space-between;border-bottom:1px solid rgba(74,78,82,.4);padding:.35rem .2rem}
-.tally li b{font-family:'BBH Bogle',sans-serif;color:var(--blue)}
-.fogbank{height:30px;margin:1.4rem 0;background:linear-gradient(to bottom,rgba(242,243,240,.0),#eef0ee 45%,#dfe2e4 80%);border-bottom:3px solid #aeb3b8;border-radius:50% 50% 0 0/100% 100% 0 0}
-.fogbank.thin{height:15px}
-footer{padding:1rem 6vw 2.6rem;max-width:1120px;margin:0 auto}
-.note{background:#d8dbdd;border-left:8px solid var(--apricot);color:var(--darkgrey);padding:.6rem 1rem}
+@font-face { font-family: 'League Spartan'; src: url('fonts/LeagueSpartan-400.woff2') format('woff2'); font-weight: 400; }
+@font-face { font-family: 'League Spartan'; src: url('fonts/LeagueSpartan-700.woff2') format('woff2'); font-weight: 700; }
+@font-face { font-family: 'Epilogue'; src: url('fonts/Epilogue-400.woff2') format('woff2'); font-weight: 400; }
+@font-face { font-family: 'Epilogue'; src: url('fonts/Epilogue-700.woff2') format('woff2'); font-weight: 700; }
+:root { --hemp: #c9b894; --quay: #5f5b52; --seaweed: #4d6b4a; --red: #c23b2e; --paper: #f3efe4; --ink: #2a2721; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Epilogue', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.6; }
+header.top { display: flex; justify-content: space-between; align-items: center; padding: 18px 28px; border-bottom: 3px solid var(--red); background: #e9e2cf; }
+.wordmark { font-family: 'League Spartan', sans-serif; font-weight: 700; letter-spacing: .05em; }
+.beacon { color: var(--red); font-weight: 700; font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; }
+.hero { text-align: center; padding: 52px 22px 10px; }
+.hero img.logo { width: 168px; height: auto; border: 4px solid var(--quay); border-radius: 6px; }
+h1, h2 { font-family: 'League Spartan', sans-serif; }
+h1 { font-size: 2.6rem; margin: 20px 0 8px; font-weight: 700; }
+.tag { color: #55503f; max-width: 44rem; margin: 0 auto; }
+.buttons { margin: 24px 0 8px; }
+.buttons a { display: inline-block; margin: 4px; padding: 11px 22px; background: var(--seaweed); color: var(--paper); font-weight: 700; text-decoration: none; border-radius: 4px; }
+.buttons a.alt { background: transparent; color: var(--seaweed); border: 2px solid var(--seaweed); }
+figure.wide { max-width: 1020px; margin: 26px auto; padding: 0 18px; }
+figure.wide img { width: 100%; height: auto; display: block; border: 1px solid var(--quay); }
+figcaption { color: #7b7562; font-size: .9rem; padding-top: 8px; text-align: center; }
+.strip { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; padding: 22px 18px; }
+.strip div { background: #e9e2cf; border-top: 3px solid var(--seaweed); padding: 14px 18px; min-width: 180px; text-align: center; }
+.strip b { display: block; font-family: 'League Spartan', sans-serif; color: var(--red); font-size: 1.15rem; }
+main { max-width: 880px; margin: 0 auto; padding: 10px 22px 30px; }
+h2 { color: var(--ink); border-bottom: 2px solid var(--quay); padding-bottom: 6px; margin-top: 38px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid var(--quay); padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #e9e2cf; }
+code { background: #e2dac2; padding: 1px 6px; border-radius: 3px; }
+.hold { border-left: 5px solid var(--red); background: #ece5d0; padding: 14px 18px; }
+footer { text-align: center; padding: 26px 18px 34px; color: #7b7562; font-size: .9rem; border-top: 3px solid var(--red); margin-top: 30px; }
 </style>
 </head>
 <body>
-<header class="hero">
-<img class="heroimg" src="assets/intro-banner.png" alt="A coast in fog: black rock in the foreground with a rope coil and a crate, the bell tower alone on its headland with the hut unlit behind it, layered fog banks above, no text">
-<div class="in">
-<img class="logo" src="assets/logo.png" alt="A fog bell in a squat open tower cut in half by a hard fog line, one post carrying a narrow altitude blue band, the name in altitude blue beneath the fog">
-<h1>analyze-string-patterns</h1>
-<p>A listening post log, one entry per topic in the order a keeper would write them. The apricot tab marks the entry that stands open.</p>
-<nav>
-<a class="plate" href="#task"><span>The task</span></a>
-<a class="plate" href="#tally"><span>The tally sheet</span></a>
-<a class="plate" href="#station"><span>Bringing the tool</span></a>
-<a class="plate" href="#run"><span>The run</span></a>
-<a class="plate" href="#outputs"><span>Outputs and failure</span></a>
-</nav>
+<header class="top"><span class="wordmark">analyze-string-patterns</span><span class="beacon">One red float among the corks</span></header>
+<section class="hero">
+<img class="logo" src="assets/logo.png" alt="Section of fishing net from directly above spread flat on a stone quay, even rows of hemp knots across the frame and a line of round cork floats along one edge with one single red float among the corks">
+<h1>The Net Loft</h1>
+<p class="tag">Identifies and counts occurrences of common suspicious string patterns within a given text file, working the whole surface knot by knot the way a mender reads a net spread flat on the quay before trusting it.</p>
+<p class="buttons"><a href="https://github.com/ShadowGuard-AI/analyze-string-patterns">View on GitHub</a> <a class="alt" href="https://github.com/ShadowGuard-AI/analyze-string-patterns#readme">Read the README</a></p>
+</section>
+<figure class="wide"><img src="assets/intro-banner.png" alt="Hands close up working a wooden mending needle along one row of the net, the finished knots even behind the needle and the red float resting beside the work"><figcaption>The mending needle at work along one row, the red float beside it.</figcaption></figure>
+<div class="strip">
+<div><b>Pattern and Count</b>the CSV's two columns</div>
+<div><b>8</b>patterns in the verified sample</div>
+<div><b>INFO</b>the default log level</div>
+<div><b>Exit 1</b>on a missing input file</div>
 </div>
-</header>
 <main>
-<section class="logpage open" id="task">
-<h2>Log entry one: the task in the keeper's words</h2>
-<p>analyze-string-patterns identifies and counts occurrences of common suspicious string patterns within a given text file, using regular expressions.</p>
-<p>The entry says nothing beyond that sentence about how patterns are chosen. A closing line, so a visitor is not left expecting a configuration step the source never mentions: the source names no pattern definition file and no way to add patterns of your own.</p>
-</section>
-<div class="fogbank"></div>
-<section class="logpage" id="tally">
-<h2>Log entry two: the eight patterns with evidence behind them</h2>
-<p>The verified behavior section names eight patterns, reported in one sample. The tally is presented as one verified sample result, not as a promise about other files, because that is all the source offers.</p>
-<div class="tally">
-<div><h3>Found in the sample</h3><ul>
-<li><span>IP address</span><b>1</b></li>
-<li><span>email address</span><b>1</b></li>
-<li><span>URL</span><b>1</b></li>
-</ul></div>
-<div><h3>Not found in the sample</h3><ul>
-<li><span>Hex Encoded</span><b>0</b></li>
-<li><span>MD5 Hash</span><b>0</b></li>
-<li><span>SHA1 Hash</span><b>0</b></li>
-<li><span>SHA256 Hash</span><b>0</b></li>
-<li><span>Base64 Encoded</span><b>0</b></li>
-</ul></div>
-</div>
-</section>
-<div class="fogbank thin"></div>
-<section class="logpage" id="station">
-<h2>Log entry three: bringing the tool to the station</h2>
-<pre>git clone https://github.com/ShadowGuard-AI/analyze-string-patterns
-cd analyze-string-patterns
-pip install -r requirements.txt</pre>
-<p>Worth pausing on: the clone address here spells the account ShadowGuard-AI correctly, hyphen included, unlike several sibling repositories in this fleet.</p>
-<p><a href="https://github.com/ShadowGuard-AI/analyze-string-patterns"><i class="hand">&#10148;</i>The repository on GitHub</a></p>
-</section>
-<div class="fogbank"></div>
-<section class="logpage" id="run">
-<h2>Log entry four: the run and its arguments</h2>
-<pre>python3 main.py FILEPATH [-o OUTPUT] [-l LEVEL]</pre>
-<p><b>FILEPATH</b> is the path to the text file to analyze.</p>
-<p><b>-h</b> shows the help message and exits.</p>
-<p><b>-o</b>, also written <b>--output</b>, gives the path to save the analysis results as a CSV file, and is optional.</p>
-<p><b>-l</b>, also written <b>--log_level</b>, sets the logging level to one of DEBUG, INFO, WARNING, ERROR, or CRITICAL, with INFO as the default.</p>
-</section>
-<div class="fogbank thin"></div>
-<section class="logpage" id="outputs">
-<h2>Log entry five: outputs and failure, closing the log</h2>
-<p>With -o, the CSV has two columns, and those two column names are set here as an actual two cell table so a reader sees the shape of the result:</p>
-<table><tr><th>Pattern</th><th>Count</th></tr></table>
-<p class="note">A missing input file exits 1, stated plainly.</p>
-<p>Licence ends the page with the source's own wording: MIT License, see LICENSE. For once in this fleet, a named licence rather than a bare copyright line.</p>
-</section>
+<h2>What it counts</h2>
+<p>The tool identifies and counts occurrences of common suspicious string patterns within a given text file, using regular expressions. Usage, as the README gives it: <code>python3 main.py FILEPATH [-o OUTPUT] [-l LEVEL]</code>. Its one requirement is <code>pandas&gt;=2.1.0</code>.</p>
+<figure class="wide" style="padding:0;margin:18px 0;"><img src="assets/banner.png" alt="Long fishing net spread across a harbour quay to dry, its knot rows running the length of the frame, cork floats along the near edge with one red float among them, a mending bench with a ball of twine at the left edge and the harbour still behind"></figure>
+<h2>Parameters</h2>
+<table>
+<tr><th>Parameter</th><th>What the README says</th></tr>
+<tr><td><code>FILEPATH</code></td><td>path to the text file to analyze.</td></tr>
+<tr><td><code>-h</code></td><td>show help message and exit.</td></tr>
+<tr><td><code>-o</code>, <code>--output</code></td><td>path to save the analysis results as a CSV file (optional). With <code>-o</code>, the CSV has two columns, <code>Pattern</code> and <code>Count</code>.</td></tr>
+<tr><td><code>-l</code>, <code>--log_level</code></td><td>logging level: <code>DEBUG</code>, <code>INFO</code>, <code>WARNING</code>, <code>ERROR</code>, or <code>CRITICAL</code>. Default: <code>INFO</code>.</td></tr>
+</table>
+<h2>Verified behavior and stated limits</h2>
+<div class="hold"><p>A sample containing one IP address, one email address, and one URL reported a count of 1 for each of those three patterns and 0 for Hex Encoded, MD5 Hash, SHA1 Hash, SHA256 Hash, and Base64 Encoded. The verified sample counts stand as tested evidence, three patterns found once each and five not found at all in the sample that was run. The tally is one sample result, not a promise about other files.</p>
+<p>A missing input file exits 1. Licence: MIT License, see LICENSE.</p></div>
 </main>
-<footer><p>Theme: fog bell and fog whistle coast. Type: BBH Bogle for headings, Bitter for reading, both SIL Open Font License 1.1. The lettering reference Beyonders was reference only and is not embedded.</p></footer>
+<footer>analyze-string-patterns, counted knot by knot. Fonts: League Spartan and Epilogue, self-hosted under the SIL Open Font License.</footer>
 </body>
 </html>

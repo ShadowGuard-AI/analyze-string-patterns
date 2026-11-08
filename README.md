@@ -1,10 +1,10 @@
-![The coast in fog: black rock with a rope coil and a crate in the foreground, the bell tower alone on its headland, the hut unlit behind it, layered fog banks above, nothing readable](intro-banner.png)
+![Hands close up working a wooden mending needle along one row of the net, the finished knots even behind the needle and the red float resting beside the work](intro-banner.png)
 
 # analyze-string-patterns
 
-![A headland station in fog, the bell swinging a short arc, one apricot window lit in the hut, the name painted in cirrus white along the hut wall and worn at the ends, the only lettering on the coast](banner.png)
+![Long fishing net spread across a harbour quay to dry, its knot rows running the length of the frame, cork floats along the near edge with one red float among them, a mending bench with a ball of twine at the left edge and the harbour still behind](banner.png)
 
-![A fog bell in a squat open tower cut in half by a hard fog line, one post carrying a narrow altitude blue band, the heading plate](logo.png)
+![Section of fishing net from directly above spread flat on a stone quay, even rows of hemp knots across the frame and a line of round cork floats along one edge with one single red float among the corks](logo.png)
 
 ![Coast scene in three layers of obscurity: fog drifts across the near rock and crate, the bell swings in a short arc at uneven intervals and rests, and the far headland gains and loses definition and vanishes once completely in a long cycle](scene.svg)
 

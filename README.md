@@ -9,14 +9,13 @@
 ![Coast scene in three layers of obscurity: fog drifts across the near rock and crate, the bell swings in a short arc at uneven intervals and rests, and the far headland gains and loses definition and vanishes once completely in a long cycle](scene.svg)
 
 
-# analyze-string-patterns
 Identifies and counts occurrences of common suspicious string patterns within a given text file, using regular expressions.
 
 
 ![Minor section divider: a smaller thunderhead centred on a silver rule, no flicker](sep-light.svg)
 
 ## Install
-```
+```sh
 git clone https://github.com/ShadowGuard-AI/analyze-string-patterns
 cd analyze-string-patterns
 pip install -r requirements.txt
@@ -26,7 +25,7 @@ pip install -r requirements.txt
 ![Major section divider: a small thunderhead on a silver rule, with a single flicker inside](sep-heavy.svg)
 
 ## Usage
-```
+```sh
 python3 main.py FILEPATH [-o OUTPUT] [-l LEVEL]
 ```
 
@@ -55,4 +54,4 @@ python3 main.py FILEPATH [-o OUTPUT] [-l LEVEL]
 ![Major section divider: a small thunderhead on a silver rule, with a single flicker inside](sep-heavy.svg)
 
 ## License
-MIT License, see LICENSE.
+MIT License, see [LICENSE](LICENSE).
